@@ -9,8 +9,9 @@ class LevelModel extends Model
 {
     use HasFactory;
 
-    protected $table = 'm_level'; // Sesuaikan dengan nama tabel level
-    protected $primaryKey = 'level_id'; // Sesuaikan dengan primary key tabel level
+    protected $table = 'm_level';
+    protected $primaryKey = 'level_id';
+    public $timestamps = false; // tambahkan ini kalau tabel tidak punya kolom created_at & updated_at
 
-    protected $fillable = ['level_id', 'level_kode' ,'level_name',]; // Sesuaikan dengan kolom yang ada di tabel level
+    protected $fillable = ['level_kode', 'level_name'];
 }
