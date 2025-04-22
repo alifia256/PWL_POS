@@ -1,4 +1,4 @@
-@empty($user)
+@empty($barang)
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -12,50 +12,54 @@
                     <h5><i class="icon fas fa-ban"></i> Kesalahan!!!</h5>
                     Data yang anda cari tidak ditemukan
                 </div>
-                <a href="{{ url('/user') }}" class="btn btn-warning">Kembali</a>
+                <a href="{{ url('/barang') }}" class="btn btn-warning">Kembali</a>
             </div>
         </div>
     </div>
-    @else
-    <form action="{{ url('/user/' . $user->user_id.'/update_ajax') }}" method="POST" id="form-edit">
+@else
+    <form action="{{ url('/barang/' . $barang->barang_id . '/update_ajax') }}" method="POST" id="form-edit">
         @csrf
         @method('PUT')
         <div id="modal-master" class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edit Data User</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Data Barang</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Level Pengguna</label>
-                        <select name="level_id" id="level_id" class="form-control" required>
-                            <option value="">- Pilih Level -</option>
-                            @foreach($level as $l)
-                                <option value="{{ $l->level_id }}" {{ $l->level_id == $user->level_id ? 'selected' : '' }}>
-                                    {{ $l->level_nama }}
+                        <label>Kategori</label>
+                        <select name="kategori_id" id="kategori_id" class="form-control" required>
+                            <option value="">- Pilih Kategori -</option>
+                            @foreach($kategori as $k)
+                                <option value="{{ $k->kategori_id }}" {{ $k->kategori_id == $barang->kategori_id ? 'selected' : '' }}>
+                                    {{ $k->kategori_nama }}
                                 </option>
                             @endforeach
                         </select>
-                        <small id="error-level_id" class="error-text form-text text-danger"></small>
+                        <small id="error-kategori_id" class="error-text form-text text-danger"></small>
                     </div>
                     <div class="form-group">
-                        <label>Username</label>
-                        <input type="text" name="username" id="username" class="form-control" value="{{ $user->username }}" required>
-                        <small id="error-username" class="error-text form-text text-danger"></small>
+                        <label>Kode Barang</label>
+                        <input type="text" name="barang_kode" id="barang_kode" class="form-control" value="{{ $barang->barang_kode }}" required>
+                        <small id="error-barang_kode" class="error-text form-text text-danger"></small>
                     </div>
                     <div class="form-group">
-                        <label>Nama</label>
-                        <input type="text" name="name" id="name" class="form-control" value="{{ $user->name }}" required>
-                        <small id="error-nama" class="error-text form-text text-danger"></small>
+                        <label>Nama Barang</label>
+                        <input type="text" name="barang_nama" id="barang_nama" class="form-control" value="{{ $barang->barang_nama }}" required>
+                        <small id="error-barang_nama" class="error-text form-text text-danger"></small>
                     </div>
                     <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" name="password" id="password" class="form-control">
-                        <small class="form-text text-muted">Abaikan jika tidak ingin ubah password</small>
-                        <small id="error-password" class="error-text form-text text-danger"></small>
+                        <label>Harga Beli</label>
+                        <input type="number" name="harga_beli" id="harga_beli" class="form-control" value="{{ $barang->harga_beli }}" step="1" required>
+                        <small id="error-harga_beli" class="error-text form-text text-danger"></small>
+                    </div>
+                    <div class="form-group">
+                        <label>Harga Jual</label>
+                        <input type="number" name="harga_jual" id="harga_jual" class="form-control" value="{{ $barang->harga_jual }}" step="1" required>
+                        <small id="error-harga_jual" class="error-text form-text text-danger"></small>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -70,10 +74,11 @@
         $(document).ready(function() {
             $("#form-edit").validate({
                 rules: {
-                    level_id: { required: true, number: true },
-                    username: { required: true, minlength: 3, maxlength: 20 },
-                    name: { required: true, minlength: 3, maxlength: 100 },
-                    password: { minlength: 6, maxlength: 20 }
+                    kategori_id: { required: true, number: true },
+                    barang_kode: { required: true, minlength: 3, maxlength: 20 },
+                    barang_nama: { required: true, minlength: 3, maxlength: 100 },
+                    harga_beli: { required: true, digits: true, min: 1 },
+                    harga_jual: { required: true, digits: true, min: 1 }
                 },
                 submitHandler: function(form) {
                     $.ajax({
@@ -88,7 +93,7 @@
                                     title: 'Berhasil',
                                     text: response.message
                                 });
-                                dataUser.ajax.reload();
+                                dataBarang.ajax.reload(); 
                             } else {
                                 $('.error-text').text('');
                                 $.each(response.msgField, function(prefix, val) {
@@ -100,6 +105,14 @@
                                     text: response.message
                                 });
                             }
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error AJAX',
+                                text: 'Terjadi kesalahan: ' + xhr.status + ' - ' + error
+                            });
+                            console.log('Error:', xhr.responseText);
                         }
                     });
                     return false;

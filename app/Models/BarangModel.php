@@ -4,27 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BarangModel extends Model
 {
     use HasFactory;
 
-    protected $table = 'm_barang'; // mendefinisikan nama tabel yang digunakan oleh model ini
-    protected $primaryKey = 'barang_id'; // mendefinisikan primary key tabel
+    protected $table = 'm_barang';
+    protected $primaryKey = 'barang_id';
+    protected $fillable = ['kategori_id', 'barang_kode', 'barang_nama', 'harga_beli', 'harga_jual'];
 
-    /**
-     * Summary of fillable
-     * @var array
-     */
-    protected $fillable = [
-        'kategori_id',
-        'barang_kode',
-        'barang_nama',
-        'harga_beli',
-        'harga_jual',
-    ];
-
-    public function kategori() {
+    public function kategori()
+    {
         return $this->belongsTo(KategoriModel::class, 'kategori_id', 'kategori_id');
     }
 }
